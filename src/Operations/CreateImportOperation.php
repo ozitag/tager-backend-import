@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Ozerich\FileStorage\Storage;
 use OZiTAG\Tager\Backend\Core\Jobs\Operation;
 use OZiTAG\Tager\Backend\Import\Enums\ImportSessionStatus;
+use OZiTAG\Tager\Backend\Import\Jobs\RunImportSessionJob;
 use OZiTAG\Tager\Backend\Import\Repositories\ImportSessionRepository;
 use OZiTAG\Tager\Backend\Import\Requests\ImportStoreRequest;
 
@@ -25,6 +26,10 @@ class CreateImportOperation extends Operation
             'file_id' => Storage::fromUUIDtoId($this->request->file),
             'status' => ImportSessionStatus::Created,
             'created_at' => Carbon::now(),
+        ]);
+
+        $this->run(RunImportSessionJob::class, [
+            'id' => $model->id
         ]);
 
         return $model;
