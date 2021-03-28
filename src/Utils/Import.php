@@ -7,6 +7,7 @@ use OZiTAG\Tager\Backend\Core\Traits\JobDispatcherTrait;
 use OZiTAG\Tager\Backend\Import\Exceptions\ImportLoadFileException;
 use OZiTAG\Tager\Backend\Import\Exceptions\ImportNotFoundFileException;
 use OZiTAG\Tager\Backend\Import\Exceptions\ImportNotFoundStrategyException;
+use OZiTAG\Tager\Backend\Import\Exceptions\ImportRowException;
 use OZiTAG\Tager\Backend\Import\Exceptions\ImportValidationException;
 use OZiTAG\Tager\Backend\Import\Contracts\BaseImportStrategy;
 use OZiTAG\Tager\Backend\Import\TagerImport;
@@ -22,6 +23,8 @@ class Import
     protected array $header;
 
     protected bool $isWindows1251;
+
+    protected ?array $fileData = null;
 
     public function setFile(string $filePath, bool $isWindows1251 = true)
     {
@@ -67,6 +70,10 @@ class Import
 
     private function loadFile(): array
     {
+        if ($this->fileData !== null) {
+            return $this->fileData;
+        }
+
         $rows = CsvReader::loadFromFile($this->filePath, $this->isWindows1251);
         if ($rows == null) {
             throw new ImportLoadFileException('Load file error');
@@ -83,6 +90,8 @@ class Import
             );
         }
 
+        $this->fileData = $result;
+
         return $result;
     }
 
@@ -95,7 +104,7 @@ class Import
                 'row' => $row
             ]);
 
-            if ($result !== true) {
+            if ($result !== true && !empty($result)) {
                 throw new ImportValidationException('Validation error - Row ' . ($ind + 1) . ' - ' . $result);
             }
         }
@@ -103,7 +112,16 @@ class Import
 
     public function process()
     {
-        $strategy = $this->getStrategy($strategyId);
-        $rows = $this->loadFile($filePath, $strategy->getRowClass());
+        $rows = $this->loadFile();
+
+        foreach ($rows as $ind => $row) {
+            $result = $this->run($this->strategy->getImportJobClass(), [
+                'row' => $row
+            ]);
+
+            if ($result !== true && !empty($result)) {
+                throw new ImportRowException('Import error - Row ' . ($ind + 1) . ' - ' . $result);
+            }
+        }
     }
 }

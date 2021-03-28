@@ -34,6 +34,8 @@ class RunImportSessionJob extends QueueJob
 
             dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::InProgress));
             $import->process();
+
+            dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::Completed));
         } catch (\Exception $exception) {
             dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::Failure, $exception->getMessage()));
         }
