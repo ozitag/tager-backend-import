@@ -19,8 +19,10 @@ class TagerImportInit extends Migration
             $table->unsignedBigInteger('file_id')->nullable();
             $table->string('status');
             $table->text('message')->nullable();
+
             $table->dateTime('created_at');
             $table->dateTime('started_at')->nullable();
+            $table->dateTime('validated_at')->nullable();
             $table->dateTime('completed_at')->nullable();
 
             $table->foreign('file_id')->references('id')->on('files');

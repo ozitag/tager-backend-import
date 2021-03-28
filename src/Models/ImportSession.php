@@ -19,6 +19,7 @@ use OZiTAG\Tager\Backend\Core\Models\TModel;
  * @property string $file_id
  * @property string $created_at
  * @property string $started_at
+ * @property string $validated_at
  * @property string $completed_at
  *
  * @property File $file
@@ -33,7 +34,7 @@ class ImportSession extends TModel
 
     protected $fillable = [
         'status', 'strategy', 'message', 'file_id',
-        'created_at', 'started_at', 'completed_at'
+        'created_at', 'started_at', 'validated_at', 'completed_at'
     ];
 
     public function file()
