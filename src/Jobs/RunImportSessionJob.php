@@ -2,13 +2,11 @@
 
 namespace OZiTAG\Tager\Backend\Import\Jobs;
 
-use Carbon\Carbon;
-use OZiTAG\Tager\Backend\Core\Jobs\Job;
 use OZiTAG\Tager\Backend\Core\Jobs\QueueJob;
-use OZiTAG\Tager\Backend\Import\Jobs\SetImportSessionStatusJob;
 use OZiTAG\Tager\Backend\Import\Enums\ImportSessionStatus;
 use OZiTAG\Tager\Backend\Import\Models\ImportSession;
 use OZiTAG\Tager\Backend\Import\Repositories\ImportSessionRepository;
+use OZiTAG\Tager\Backend\Import\Utils\Import;
 
 class RunImportSessionJob extends QueueJob
 {
@@ -19,7 +17,7 @@ class RunImportSessionJob extends QueueJob
         $this->id = $id;
     }
 
-    public function handle(ImportSessionRepository $importSessionRepository)
+    public function handle(ImportSessionRepository $importSessionRepository, Import $import)
     {
         /** @var ImportSession $model */
         $model = $importSessionRepository->find($this->id);
@@ -27,12 +25,15 @@ class RunImportSessionJob extends QueueJob
             return;
         }
 
-        dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::InProgress));
-
         try {
+            dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::Validation));
+            $import->validate($model->strategy, $model->file->getPath());
 
+            dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::InProgress));
+            $import->run($model->strategy, $model->file->getPath());
         } catch (\Exception $exception) {
             dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::Failure, $exception->getMessage()));
+            return;
         }
     }
 }
