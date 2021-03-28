@@ -2,6 +2,10 @@
 
 namespace OZiTAG\Tager\Backend\Import\Contracts;
 
+use App\Tager\Import\ProductPrices\ProductPricesImportRowJob;
+use App\Tager\Import\ProductPrices\ProductPricesRow;
+use App\Tager\Import\ProductPrices\ProductPricesValidateRowJob;
+
 abstract class BaseImportStrategy
 {
     abstract function getId(): string;
@@ -10,19 +14,9 @@ abstract class BaseImportStrategy
 
     abstract function fields(): array;
 
-    abstract function validate(array $rows): bool;
+    abstract function getRowClass(): string;
 
-    abstract function run(array $rows);
+    abstract function getValidateJobClass(): string;
 
-    protected ?string $validationError = null;
-
-    protected function setValidationError(string $validationError)
-    {
-        $this->validationError = $validationError;
-    }
-
-    public function getValidationError(): ?string
-    {
-        return $this->validationError;
-    }
+    abstract function getImportJobClass(): string;
 }

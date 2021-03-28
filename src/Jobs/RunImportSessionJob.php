@@ -26,14 +26,16 @@ class RunImportSessionJob extends QueueJob
         }
 
         try {
+            $import->setFile($model->file->getPath(), true);
+            $import->setStrategy($model->strategy);
+
             dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::Validation));
-            $import->validate($model->strategy, $model->file->getPath());
+            $import->validate();
 
             dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::InProgress));
-            $import->run($model->strategy, $model->file->getPath());
+            $import->process();
         } catch (\Exception $exception) {
             dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::Failure, $exception->getMessage()));
-            return;
         }
     }
 }

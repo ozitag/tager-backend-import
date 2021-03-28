@@ -1,8 +1,8 @@
 <?php
 
-namespace OZiTAG\Tager\Backend\Export\Exceptions;
+namespace OZiTAG\Tager\Backend\Import\Exceptions;
 
-class ImportNotFoundFileException extends ExportException
+class ImportNotFoundFileException extends ImportException
 {
 
 }
