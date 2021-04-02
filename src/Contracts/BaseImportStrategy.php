@@ -18,7 +18,15 @@ abstract class BaseImportStrategy
 
     abstract function getValidateRowJobClass(): string;
 
-    abstract function getImportRowJobClass(): string;
+    public function getImportJobClass(): ?string
+    {
+        return null;
+    }
+
+    public function getImportRowJobClass(): ?string
+    {
+        return null;
+    }
 
     public function getCacheNamespaces(): array
     {

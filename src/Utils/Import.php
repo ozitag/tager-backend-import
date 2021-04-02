@@ -4,6 +4,7 @@ namespace OZiTAG\Tager\Backend\Import\Utils;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use OZiTAG\Tager\Backend\Core\Traits\JobDispatcherTrait;
+use OZiTAG\Tager\Backend\Import\Exceptions\ImportException;
 use OZiTAG\Tager\Backend\Import\Exceptions\ImportLoadFileException;
 use OZiTAG\Tager\Backend\Import\Exceptions\ImportNotFoundFileException;
 use OZiTAG\Tager\Backend\Import\Exceptions\ImportNotFoundStrategyException;
@@ -107,12 +108,25 @@ class Import
         }
     }
 
-    public function process()
+    public function process(): void
     {
         $rows = $this->loadFile();
 
+        $importJobClass = $this->strategy->getImportJobClass();
+        if (!empty($importJobClass)) {
+            $result = $this->run($importJobClass, [
+                'rows' => $rows
+            ]);
+            return;
+        }
+
+        $importRowJobClass = $this->strategy->getImportRowJobClass();
+        if (empty($importRowJobClass)) {
+            throw new ImportException('Import Error - Import Row Job class is not set');
+        }
+
         foreach ($rows as $ind => $row) {
-            $result = $this->run($this->strategy->getImportRowJobClass(), [
+            $result = $this->run($importRowJobClass, [
                 'row' => $row
             ]);
 
