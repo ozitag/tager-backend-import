@@ -3,9 +3,12 @@
 namespace OZiTAG\Tager\Backend\Import\Jobs;
 
 use OZiTAG\Tager\Backend\Core\Jobs\QueueJob;
+use OZiTAG\Tager\Backend\HttpCache\HttpCache;
 use OZiTAG\Tager\Backend\Import\Enums\ImportSessionStatus;
+use OZiTAG\Tager\Backend\Import\Exceptions\ImportNotFoundStrategyException;
 use OZiTAG\Tager\Backend\Import\Models\ImportSession;
 use OZiTAG\Tager\Backend\Import\Repositories\ImportSessionRepository;
+use OZiTAG\Tager\Backend\Import\TagerImport;
 use OZiTAG\Tager\Backend\Import\Utils\Import;
 
 class RunImportSessionJob extends QueueJob
@@ -17,7 +20,7 @@ class RunImportSessionJob extends QueueJob
         $this->id = $id;
     }
 
-    public function handle(ImportSessionRepository $importSessionRepository, Import $import)
+    public function handle(ImportSessionRepository $importSessionRepository, Import $import, HttpCache $httpCache)
     {
         /** @var ImportSession $model */
         $model = $importSessionRepository->find($this->id);
@@ -27,13 +30,22 @@ class RunImportSessionJob extends QueueJob
 
         try {
             $import->setFile($model->file->getPath(), true);
-            $import->setStrategy($model->strategy);
+
+            $strategy = TagerImport::getStrategy($model->strategy);
+            if (!$strategy) {
+                throw new ImportNotFoundStrategyException('Strategy "' . $model->strategy . '" not found');
+            }
+            $import->setStrategy($strategy);
 
             dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::Validation));
             $import->validate();
 
             dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::InProgress));
             $import->process();
+
+            if (!empty($strategy->getCacheNamespaces())) {
+                $httpCache->clear($strategy->getCacheNamespaces());
+            }
 
             dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::Completed));
         } catch (\Exception $exception) {

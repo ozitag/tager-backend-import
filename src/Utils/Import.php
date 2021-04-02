@@ -37,12 +37,9 @@ class Import
         $this->filePath = $filePath;
     }
 
-    public function setStrategy(string $strategyId)
+    public function setStrategy(BaseImportStrategy $strategy)
     {
-        $this->strategy = TagerImport::getStrategy($strategyId);
-        if (!$this->strategy) {
-            throw new ImportNotFoundStrategyException('Strategy "' . $strategyId . '" not found');
-        }
+        $this->strategy = $strategy;
     }
 
     protected function setHeader(array $header)
@@ -100,7 +97,7 @@ class Import
         $rows = $this->loadFile();
 
         foreach ($rows as $ind => $row) {
-            $result = $this->run($this->strategy->getValidateJobClass(), [
+            $result = $this->run($this->strategy->getValidateRowJobClass(), [
                 'row' => $row
             ]);
 
@@ -115,7 +112,7 @@ class Import
         $rows = $this->loadFile();
 
         foreach ($rows as $ind => $row) {
-            $result = $this->run($this->strategy->getImportJobClass(), [
+            $result = $this->run($this->strategy->getImportRowJobClass(), [
                 'row' => $row
             ]);
 
