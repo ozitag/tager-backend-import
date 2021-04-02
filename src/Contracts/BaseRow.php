@@ -11,8 +11,13 @@ abstract class BaseRow
         $this->data = $data;
     }
 
-    public function __get(string $name)
+    public function __get(string $name): mixed
     {
         return $this->data[$name] ?? null;
+    }
+
+    public function __isset(string $name): bool
+    {
+        return isset($this->data[$name]);
     }
 }
