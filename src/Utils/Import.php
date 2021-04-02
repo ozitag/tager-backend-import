@@ -12,6 +12,7 @@ use OZiTAG\Tager\Backend\Import\Exceptions\ImportRowException;
 use OZiTAG\Tager\Backend\Import\Exceptions\ImportValidationException;
 use OZiTAG\Tager\Backend\Import\Contracts\BaseImportStrategy;
 use OZiTAG\Tager\Backend\Import\TagerImport;
+use OZiTAG\Tager\Backend\Utils\Formatters\ExceptionFormatter;
 
 class Import
 {
@@ -114,7 +115,7 @@ class Import
 
         $importJobClass = $this->strategy->getImportJobClass();
         if (!empty($importJobClass)) {
-            $result = $this->run($importJobClass, [
+            $this->run($importJobClass, [
                 'rows' => $rows
             ]);
             return;
@@ -126,12 +127,17 @@ class Import
         }
 
         foreach ($rows as $ind => $row) {
-            $result = $this->run($importRowJobClass, [
-                'row' => $row
-            ]);
+            try {
+                $result = $this->run($importRowJobClass, [
+                    'row' => $row
+                ]);
 
-            if ($result !== true && !empty($result)) {
-                throw new ImportRowException('Import error - Row ' . ($ind + 1) . ' - ' . $result);
+                if ($result !== true && !empty($result)) {
+                    throw new ImportRowException('Import error - Row ' . ($ind + 1) . ' - ' . $result);
+                }
+            } catch (\Throwable $exception) {
+                throw new ImportRowException('Import error - Row ' . ($ind + 1) . ' - ' .
+                    ExceptionFormatter::getMessageWithFileInfo($exception));
             }
         }
     }
