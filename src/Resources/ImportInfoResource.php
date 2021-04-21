@@ -23,7 +23,7 @@ class ImportInfoResource extends JsonResource
         $this->fileScenario = $value;
     }
 
-    public function toResponse($request)
+    public function getData()
     {
         $result = [
             'fileScenario' => $this->fileScenario,

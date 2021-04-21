@@ -14,9 +14,9 @@ class ImportInfoFeature extends Feature
 {
     public function handle()
     {
-        $result = new ImportInfoResource();
+        $result = new ImportInfoResource([]);
 
-        $result->setScenarios(TagerImport::getStrategies());
+        $result->setStrategies(TagerImport::getStrategies());
         $result->setFileScenario(config('tager-import.fileScenario'));
 
         return $result;
