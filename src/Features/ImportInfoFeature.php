@@ -6,22 +6,19 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Ozerich\FileStorage\Storage;
 use OZiTAG\Tager\Backend\Core\Features\Feature;
 use OZiTAG\Tager\Backend\Core\Resources\SuccessResource;
+use OZiTAG\Tager\Backend\Import\Resources\ImportInfoResource;
 use OZiTAG\Tager\Backend\Import\TagerImport;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class ImportStrategiesFeature extends Feature
+class ImportInfoFeature extends Feature
 {
     public function handle()
     {
-        $data = [];
+        $result = new ImportInfoResource();
 
-        foreach (TagerImport::getStrategies() as $strategy) {
-            $data[] = [
-                'id' => $strategy->getId(),
-                'name' => $strategy->getName()
-            ];
-        }
+        $result->setScenarios(TagerImport::getStrategies());
+        $result->setFileScenario(config('tager-import.fileScenario'));
 
-        return new JsonResource($data);
+        return $result;
     }
 }

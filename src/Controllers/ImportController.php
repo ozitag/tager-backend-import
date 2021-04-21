@@ -2,12 +2,11 @@
 
 namespace OZiTAG\Tager\Backend\Import\Controllers;
 
-use Illuminate\Support\Facades\URL;
 use OZiTAG\Tager\Backend\Crud\Actions\IndexAction;
 use OZiTAG\Tager\Backend\Crud\Actions\StoreOrUpdateAction;
 use OZiTAG\Tager\Backend\Crud\Controllers\AdminCrudController;
 use OZiTAG\Tager\Backend\Import\Enums\ImportSessionStatus;
-use OZiTAG\Tager\Backend\Import\Features\ImportStrategiesFeature;
+use OZiTAG\Tager\Backend\Import\Features\ImportInfoFeature;
 use OZiTAG\Tager\Backend\Import\Models\ImportSession;
 use OZiTAG\Tager\Backend\Import\Operations\CreateImportOperation;
 use OZiTAG\Tager\Backend\Import\Repositories\ImportSessionRepository;
@@ -73,8 +72,8 @@ class ImportController extends AdminCrudController
         ], true);
     }
 
-    public function strategies()
+    public function info()
     {
-        return $this->serve(ImportStrategiesFeature::class);
+        return $this->serve(ImportInfoFeature::class);
     }
 }
