@@ -2,9 +2,11 @@
 
 namespace OZiTAG\Tager\Backend\Import\Requests;
 
+use App\Enums\FileScenario;
 use Ozerich\FileStorage\Rules\FileRule;
 use OZiTAG\Tager\Backend\Core\Http\FormRequest;
 use OZiTAG\Tager\Backend\Crud\Requests\CrudFormRequest;
+use OZiTAG\Tager\Backend\Import\TagerImport;
 
 /**
  * Class ImportStoreRequest
@@ -18,7 +20,7 @@ class ImportStoreRequest extends CrudFormRequest
     public function fileScenarios()
     {
         return [
-            'file' => config('tager-import.fileScenario')
+            'file' => TagerImport::getFileScenario()
         ];
     }
 
