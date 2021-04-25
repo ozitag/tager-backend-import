@@ -24,17 +24,13 @@ class Import
 
     protected array $header;
 
-    protected bool $isWindows1251;
-
     protected ?array $fileData = null;
 
-    public function setFile(string $filePath, bool $isWindows1251 = true)
+    public function setFile(string $filePath)
     {
         if (!is_file($filePath)) {
             throw new ImportNotFoundFileException('File not found');
         }
-
-        $this->isWindows1251 = $isWindows1251;
 
         $this->filePath = $filePath;
     }
@@ -73,7 +69,7 @@ class Import
             return $this->fileData;
         }
 
-        $rows = CsvReader::loadFromFile($this->filePath, $this->isWindows1251);
+        $rows = CsvReader::loadFromFile($this->filePath);
         if ($rows == null) {
             throw new ImportLoadFileException('Load file error');
         }

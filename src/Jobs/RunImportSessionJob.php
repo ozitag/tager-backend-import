@@ -29,7 +29,7 @@ class RunImportSessionJob extends QueueJob
         }
 
         try {
-            $import->setFile($model->file->getPath(), true);
+            $import->setFile($model->file->getPath());
 
             $strategy = TagerImport::getStrategy($model->strategy);
             if (!$strategy) {
