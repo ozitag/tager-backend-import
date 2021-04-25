@@ -8,6 +8,15 @@ use Ozerich\FileStorage\Storage;
 
 class CsvReader
 {
+    private static function removeBomUtf8($s)
+    {
+        if (substr($s, 0, 3) == chr(hexdec('EF')) . chr(hexdec('BB')) . chr(hexdec('BF'))) {
+            return substr($s, 3);
+        } else {
+            return $s;
+        }
+    }
+
     private static function detectDelimiter(string $filePath): ?string
     {
         if (!is_file($filePath)) {
@@ -30,7 +39,28 @@ class CsvReader
         return array_search(max($delimiters), $delimiters);
     }
 
-    public static function loadFromFile(string $filePath, bool $isWindows1251 = false): ?array
+    private static function convertToUTF(string $s)
+    {
+        $encoding = mb_detect_encoding($s, "UTF-8,ISO-8859-1,WINDOWS-1251");
+
+        if ($encoding != 'UTF-8') {
+            return mb_convert_encoding($s, 'UTF-8', 'Windows-1251');
+        } else {
+            return self::removeBomUtf8($s);
+        }
+    }
+
+    private static function fgetcsvUTF8(&$handle, $length, $separator = ';'): ?array
+    {
+        if (($buffer = fgets($handle, $length)) !== false) {
+            $buffer = self::convertToUTF($buffer);
+            return str_getcsv($buffer, $separator);
+        }
+
+        return null;
+    }
+
+    public static function loadFromFile(string $filePath): ?array
     {
         if (!is_file($filePath)) {
             return null;
@@ -40,16 +70,11 @@ class CsvReader
 
         $f = fopen($filePath, 'r+');
         $result = [];
-        while (($row = fgetcsv($f, 100000, $delimiter))) {
-            if ($isWindows1251) {
-                foreach ($row as &$cell) {
-                    $cell = mb_convert_encoding($cell, 'UTF-8', 'Windows-1251');
-                }
-            }
+        while (($row = self::fgetcsvUTF8($f, 100000, $delimiter))) {
             $result[] = $row;
         }
         fclose($f);
-
+        
         return $result;
     }
 }
