@@ -24,6 +24,8 @@ class Import
 
     protected array $header;
 
+    protected ?string $delimiter = null;
+
     protected ?array $fileData = null;
 
     public function setFile(string $filePath)
@@ -38,6 +40,11 @@ class Import
     public function setStrategy(BaseImportStrategy $strategy)
     {
         $this->strategy = $strategy;
+    }
+
+    public function setDelimiter(string $delimiter)
+    {
+        $this->delimiter = $delimiter;
     }
 
     protected function setHeader(array $header)
@@ -69,7 +76,7 @@ class Import
             return $this->fileData;
         }
 
-        $rows = CsvReader::loadFromFile($this->filePath);
+        $rows = CsvReader::loadFromFile($this->filePath, $this->delimiter);
         if ($rows == null) {
             throw new ImportLoadFileException('Load file error');
         }

@@ -60,13 +60,15 @@ class CsvReader
         return null;
     }
 
-    public static function loadFromFile(string $filePath): ?array
+    public static function loadFromFile(string $filePath, ?string $delimiter = null): ?array
     {
         if (!is_file($filePath)) {
             return null;
         }
 
-        $delimiter = self::detectDelimiter($filePath);
+        if (is_null($delimiter)) {
+            $delimiter = self::detectDelimiter($filePath);
+        }
 
         $f = fopen($filePath, 'r+');
         $result = [];
@@ -78,7 +80,7 @@ class CsvReader
                     continue;
                 }
             }
-            if($hasNotEmpty) {
+            if ($hasNotEmpty) {
                 $result[] = $row;
             }
         }

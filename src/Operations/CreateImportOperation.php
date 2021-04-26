@@ -29,7 +29,8 @@ class CreateImportOperation extends Operation
         ]);
 
         $this->run(RunImportSessionJob::class, [
-            'id' => $model->id
+            'id' => $model->id,
+            'delimiter' => $this->request->delimiter
         ]);
 
         return $model;

@@ -15,9 +15,13 @@ class RunImportSessionJob extends QueueJob
 {
     protected int $id;
 
-    public function __construct(int $id)
+    protected ?string $delimiter;
+
+    public function __construct(int $id, ?string $delimiter = null)
     {
         $this->id = $id;
+
+        $this->delimiter = $delimiter;
     }
 
     public function handle(ImportSessionRepository $importSessionRepository, Import $import, HttpCache $httpCache)
@@ -36,6 +40,7 @@ class RunImportSessionJob extends QueueJob
                 throw new ImportNotFoundStrategyException('Strategy "' . $model->strategy . '" not found');
             }
             $import->setStrategy($strategy);
+            $import->setDelimiter($this->delimiter);
 
             dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::Validation));
             $import->validate();
