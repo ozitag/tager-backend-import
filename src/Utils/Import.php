@@ -42,7 +42,7 @@ class Import
         $this->strategy = $strategy;
     }
 
-    public function setDelimiter(string $delimiter)
+    public function setDelimiter(?string $delimiter)
     {
         $this->delimiter = $delimiter;
     }
