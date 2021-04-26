@@ -71,10 +71,19 @@ class CsvReader
         $f = fopen($filePath, 'r+');
         $result = [];
         while (($row = self::fgetcsvUTF8($f, 100000, $delimiter))) {
-            $result[] = $row;
+            $hasNotEmpty = false;
+            foreach ($row as $value) {
+                if (!empty($value)) {
+                    $hasNotEmpty = true;
+                    continue;
+                }
+            }
+            if($hasNotEmpty) {
+                $result[] = $row;
+            }
         }
         fclose($f);
-        
+
         return $result;
     }
 }
