@@ -30,7 +30,7 @@ class CreateImportOperation extends Operation
 
         $this->run(RunImportSessionJob::class, [
             'id' => $model->id,
-            'delimiter' => $this->request->delimiter
+            'delimiter' => $this->request->delimiter == "\\t" ? "\t" : $this->request->delimiter
         ]);
 
         return $model;

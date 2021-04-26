@@ -2,10 +2,6 @@
 
 namespace OZiTAG\Tager\Backend\Import\Utils;
 
-use App\Enums\FileScenario;
-use Illuminate\Support\Facades\App;
-use Ozerich\FileStorage\Storage;
-
 class CsvReader
 {
     private static function removeBomUtf8($s)
@@ -60,11 +56,14 @@ class CsvReader
         return null;
     }
 
+
     public static function loadFromFile(string $filePath, ?string $delimiter = null): ?array
     {
         if (!is_file($filePath)) {
             return null;
         }
+
+        ini_set("auto_detect_line_endings", true);
 
         if (is_null($delimiter)) {
             $delimiter = self::detectDelimiter($filePath);
