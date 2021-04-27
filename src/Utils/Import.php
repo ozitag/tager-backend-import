@@ -61,7 +61,7 @@ class Import
         foreach ($this->header as $ind => $title) {
             foreach ($fields as $field => $label) {
                 if ($title == $label) {
-                    $result[$field] = $row[$ind];
+                    $result[$field] = $row[$ind] ?? null;
                     break;
                 }
             }

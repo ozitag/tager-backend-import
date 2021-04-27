@@ -10,6 +10,7 @@ use OZiTAG\Tager\Backend\Import\Models\ImportSession;
 use OZiTAG\Tager\Backend\Import\Repositories\ImportSessionRepository;
 use OZiTAG\Tager\Backend\Import\TagerImport;
 use OZiTAG\Tager\Backend\Import\Utils\Import;
+use OZiTAG\Tager\Backend\Utils\Formatters\ExceptionFormatter;
 
 class RunImportSessionJob extends QueueJob
 {
@@ -54,7 +55,7 @@ class RunImportSessionJob extends QueueJob
 
             dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::Completed));
         } catch (\Exception $exception) {
-            dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::Failure, $exception->getMessage()));
+            dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::Failure, ExceptionFormatter::getMessageWithFileInfo($exception)));
         }
     }
 }
