@@ -28,9 +28,15 @@ class CreateImportOperation extends Operation
             'created_at' => Carbon::now(),
         ]);
 
+        $paramsFiltered = [];
+        foreach ($this->request->params as $param) {
+            $paramsFiltered[$param['name']] = $param['value'];
+        }
+
         $this->run(RunImportSessionJob::class, [
             'id' => $model->id,
-            'delimiter' => $this->request->delimiter == "\\t" ? "\t" : $this->request->delimiter
+            'delimiter' => $this->request->delimiter == "\\t" ? "\t" : $this->request->delimiter,
+            'params' => $paramsFiltered
         ]);
 
         return $model;

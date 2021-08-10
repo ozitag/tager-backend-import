@@ -15,6 +15,7 @@ use OZiTAG\Tager\Backend\Import\TagerImport;
  * @property string $strategy
  * @property string $file
  * @property string $delimiter
+ * @property array $params
  */
 class ImportStoreRequest extends CrudFormRequest
 {
@@ -30,7 +31,10 @@ class ImportStoreRequest extends CrudFormRequest
         return [
             'strategy' => 'required|string',
             'file' => ['required', new FileRule()],
-            'delimiter' => 'nullable|string'
+            'delimiter' => 'nullable|string',
+            'params' => 'nullable|array',
+            'params.*.name' => 'string',
+            'params.*.value' => 'present'
         ];
     }
 }

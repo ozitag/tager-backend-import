@@ -31,9 +31,16 @@ class ImportInfoResource extends JsonResource
         ];
 
         foreach ($this->strategies as $strategy) {
+            $fields = [];
+
+            foreach ($strategy->conditionalFields() as $name => $conditionalField) {
+                $fields[] = $conditionalField->setName($name)->getJson();
+            }
+
             $result['strategies'][] = [
                 'id' => $strategy->getId(),
-                'name' => $strategy->getName()
+                'name' => $strategy->getName(),
+                'fields' => $fields
             ];
         }
 

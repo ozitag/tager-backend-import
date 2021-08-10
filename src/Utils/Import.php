@@ -20,6 +20,8 @@ class Import
 
     protected BaseImportStrategy $strategy;
 
+    protected array $params;
+
     protected string $filePath;
 
     protected array $header;
@@ -37,9 +39,11 @@ class Import
         $this->filePath = $filePath;
     }
 
-    public function setStrategy(BaseImportStrategy $strategy)
+    public function setStrategy(BaseImportStrategy $strategy, array $params = [])
     {
         $this->strategy = $strategy;
+
+        $this->params = $params;
     }
 
     public function setDelimiter(?string $delimiter)
@@ -119,7 +123,8 @@ class Import
         $importJobClass = $this->strategy->getImportJobClass();
         if (!empty($importJobClass)) {
             $this->run($importJobClass, [
-                'rows' => $rows
+                'rows' => $rows,
+                'params' => $this->params
             ]);
             return;
         }
@@ -132,7 +137,8 @@ class Import
         foreach ($rows as $ind => $row) {
             try {
                 $result = $this->run($importRowJobClass, [
-                    'row' => $row
+                    'row' => $row,
+                    'params' => $this->params
                 ]);
 
                 if ($result !== true && !empty($result)) {
