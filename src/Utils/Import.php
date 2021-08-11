@@ -53,6 +53,10 @@ class Import
 
     protected function setHeader(array $header)
     {
+        foreach ($header as &$item) {
+            $item = trim($item);
+        }
+
         $this->header = $header;
     }
 
@@ -65,7 +69,7 @@ class Import
         foreach ($this->header as $ind => $title) {
             foreach ($fields as $field => $label) {
                 if ($title == $label) {
-                    $result[$field] = $row[$ind] ?? null;
+                    $result[$field] = $row[$ind] ? trim($row[$ind]) : null;
                     break;
                 }
             }
@@ -90,6 +94,7 @@ class Import
 
         $rowClass = $this->strategy->getRowClass();
         $result = [];
+
         foreach ($rows as $item) {
             $result[] = new $rowClass(
                 $this->prepareRow($item)
