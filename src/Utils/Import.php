@@ -69,7 +69,7 @@ class Import
         foreach ($this->header as $ind => $title) {
             foreach ($fields as $field => $label) {
                 if ($title == $label) {
-                    $result[$field] = $row[$ind] ? trim($row[$ind]) : null;
+                    $result[$field] = isset($row[$ind]) && $row[$ind] ? trim($row[$ind]) : null;
                     break;
                 }
             }
