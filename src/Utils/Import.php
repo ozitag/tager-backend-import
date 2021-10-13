@@ -108,10 +108,15 @@ class Import
 
     public function validate(): void
     {
+        $validateJobClass = $this->strategy->getValidateRowJobClass();
+        if (empty($validateJobClass)) {
+            return;
+        }
+        
         $rows = $this->loadFile();
 
         foreach ($rows as $ind => $row) {
-            $result = $this->run($this->strategy->getValidateRowJobClass(), [
+            $result = $this->run($validateJobClass, [
                 'row' => $row
             ]);
 
