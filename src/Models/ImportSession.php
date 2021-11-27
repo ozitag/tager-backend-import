@@ -16,7 +16,8 @@ use OZiTAG\Tager\Backend\Core\Models\TModel;
  * @property string $status
  * @property string $strategy
  * @property string $error
- * @property string $file_id
+ * @property int $file_id
+ * @property string $params
  * @property string $created_at
  * @property string $started_at
  * @property string $validated_at
@@ -33,7 +34,7 @@ class ImportSession extends TModel
     protected $table = 'tager_import_sessions';
 
     protected $fillable = [
-        'status', 'strategy', 'message', 'file_id',
+        'status', 'strategy', 'message', 'file_id', 'params',
         'created_at', 'started_at', 'validated_at', 'completed_at'
     ];
 

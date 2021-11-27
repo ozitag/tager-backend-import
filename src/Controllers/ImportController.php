@@ -35,6 +35,7 @@ class ImportController extends AdminCrudController
             'id', 'strategy',
             'status:enum:' . ImportSessionStatus::class,
             'message',
+            'params:json',
             'history' => function (ImportSession $importSession) {
                 $result = [
                     [
