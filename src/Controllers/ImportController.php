@@ -60,7 +60,7 @@ class ImportController extends AdminCrudController
 
                 if ($importSession->completed_at) {
                     $result[] = [
-                        'status' => ImportSessionStatus::label($importSession->status),
+                        'status' => ImportSessionStatus::label(ImportSessionStatus::from($importSession->status)),
                         'datetime' => $importSession->completed_at,
                     ];
                 }
@@ -68,7 +68,7 @@ class ImportController extends AdminCrudController
                 return $result;
             },
             'file' => function (ImportSession $importSession) {
-                return $importSession->file ? $importSession->file->getShortJson() : null;
+                return $importSession->file?->getShortJson();
             },
         ], true);
     }

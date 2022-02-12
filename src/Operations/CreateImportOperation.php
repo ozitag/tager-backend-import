@@ -25,7 +25,7 @@ class CreateImportOperation extends Operation
         $model = $repository->fillAndSave([
             'strategy' => $this->request->strategy,
             'file_id' => Storage::fromUUIDtoId($this->request->file),
-            'status' => ImportSessionStatus::Created,
+            'status' => ImportSessionStatus::Created->value,
             'created_at' => Carbon::now(),
         ]);
 

@@ -13,11 +13,11 @@ class SetImportSessionStatusJob extends Job
 {
     protected ImportSession $importSession;
 
-    protected string $status;
+    protected ImportSessionStatus $status;
 
     protected ?string $message;
 
-    public function __construct(ImportSession $importSession, string $status, ?string $message = null)
+    public function __construct(ImportSession $importSession, ImportSessionStatus $status, ?string $message = null)
     {
         $this->importSession = $importSession;
 
@@ -32,23 +32,23 @@ class SetImportSessionStatusJob extends Job
 
         if ($this->status == ImportSessionStatus::Validation) {
             $importSessionRepository->fillAndSave([
-                'status' => ImportSessionStatus::Validation,
+                'status' => ImportSessionStatus::Validation->value,
                 'started_at' => Carbon::now()
             ]);
         } else if ($this->status == ImportSessionStatus::InProgress) {
             $importSessionRepository->fillAndSave([
-                'status' => ImportSessionStatus::InProgress,
+                'status' => ImportSessionStatus::InProgress->value,
                 'validated_at' => Carbon::now()
             ]);
         } else if ($this->status == ImportSessionStatus::Completed) {
             $importSessionRepository->fillAndSave([
-                'status' => ImportSessionStatus::Completed,
+                'status' => ImportSessionStatus::Completed->value,
                 'completed_at' => Carbon::now(),
                 'message' => $this->message
             ]);
         } else if ($this->status == ImportSessionStatus::Failure) {
             $importSessionRepository->fillAndSave([
-                'status' => ImportSessionStatus::Failure,
+                'status' => ImportSessionStatus::Failure->value,
                 'completed_at' => Carbon::now(),
                 'message' => $this->message
             ]);

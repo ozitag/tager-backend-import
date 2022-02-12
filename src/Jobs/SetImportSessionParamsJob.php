@@ -3,14 +3,10 @@
 namespace OZiTAG\Tager\Backend\Import\Jobs;
 
 use OZiTAG\Tager\Backend\Core\Jobs\QueueJob;
-use OZiTAG\Tager\Backend\HttpCache\HttpCache;
-use OZiTAG\Tager\Backend\Import\Enums\ImportSessionStatus;
 use OZiTAG\Tager\Backend\Import\Exceptions\ImportNotFoundStrategyException;
 use OZiTAG\Tager\Backend\Import\Models\ImportSession;
 use OZiTAG\Tager\Backend\Import\Repositories\ImportSessionRepository;
 use OZiTAG\Tager\Backend\Import\TagerImport;
-use OZiTAG\Tager\Backend\Import\Utils\Import;
-use OZiTAG\Tager\Backend\Utils\Formatters\ExceptionFormatter;
 
 class SetImportSessionParamsJob extends QueueJob
 {

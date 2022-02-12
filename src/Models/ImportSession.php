@@ -29,7 +29,7 @@ class ImportSession extends TModel
 {
     public $timestamps = false;
 
-    static $defaultOrder = 'created_at DESC';
+    static string $defaultOrder = 'created_at DESC';
 
     protected $table = 'tager_import_sessions';
 

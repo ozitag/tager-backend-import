@@ -2,11 +2,6 @@
 
 namespace OZiTAG\Tager\Backend\Import\Contracts;
 
-use App\Tager\Import\ProductPrices\ProductPricesImportRowJob;
-use App\Tager\Import\ProductPrices\ProductPricesRow;
-use App\Tager\Import\ProductPrices\ProductPricesValidateRowJob;
-use OZiTAG\Tager\Backend\Fields\Base\Field;
-
 abstract class BaseImportStrategy
 {
     abstract function getId(): string;
@@ -37,7 +32,6 @@ abstract class BaseImportStrategy
         return [];
     }
 
-    /** @return Field[] */
     public function conditionalFields(): array
     {
         return [];
