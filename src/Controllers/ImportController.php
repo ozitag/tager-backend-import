@@ -39,28 +39,28 @@ class ImportController extends AdminCrudController
             'history' => function (ImportSession $importSession) {
                 $result = [
                     [
-                        'status' => ImportSessionStatus::label(ImportSessionStatus::Created),
+                        'status' => ImportSessionStatus::label(ImportSessionStatus::Created->value),
                         'datetime' => $importSession->created_at,
                     ]
                 ];
 
                 if ($importSession->started_at) {
                     $result[] = [
-                        'status' => ImportSessionStatus::label(ImportSessionStatus::Validation),
+                        'status' => ImportSessionStatus::label(ImportSessionStatus::Validation->value),
                         'datetime' => $importSession->started_at,
                     ];
                 }
 
                 if ($importSession->validated_at) {
                     $result[] = [
-                        'status' => ImportSessionStatus::label(ImportSessionStatus::InProgress),
+                        'status' => ImportSessionStatus::label(ImportSessionStatus::InProgress->value),
                         'datetime' => $importSession->validated_at,
                     ];
                 }
 
                 if ($importSession->completed_at) {
                     $result[] = [
-                        'status' => ImportSessionStatus::label(ImportSessionStatus::from($importSession->status)),
+                        'status' => ImportSessionStatus::label($importSession->status),
                         'datetime' => $importSession->completed_at,
                     ];
                 }

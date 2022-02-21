@@ -10,14 +10,14 @@ enum ImportSessionStatus: string
     case Completed = 'COMPLETED';
     case Failure = 'FAILURE';
 
-    public static function label(self $value): string
+    public static function label(string $value): string
     {
         return match ($value) {
-            self::Created => 'Создан',
-            self::Validation => 'Валидация',
-            self::InProgress => 'В процессе',
-            self::Completed => 'Завершен',
-            self::Failure => 'Ошибка',
+            self::Created->value => 'Создан',
+            self::Validation->value => 'Валидация',
+            self::InProgress->value => 'В процессе',
+            self::Completed->value => 'Завершен',
+            self::Failure->value => 'Ошибка',
             default => 'Unknown',
         };
     }
