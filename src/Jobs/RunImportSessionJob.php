@@ -37,8 +37,14 @@ class RunImportSessionJob extends Job
             return;
         }
 
+        $filename = storage_path('tager-import-'.uniqid().'.csv');
         try {
-            $import->setFile($model->file->getPath());
+            $f = fopen($filename, 'w+');
+            fwrite($f, $model->file->getBody());
+            fclose($f);
+            $model->file->getBody();
+
+            $import->setFile($filename);
 
             $strategy = TagerImport::getStrategy($model->strategy);
             if (!$strategy) {
@@ -49,7 +55,7 @@ class RunImportSessionJob extends Job
 
             dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::Validation));
             $import->validate();
- 
+
             dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::InProgress));
             $import->process();
 
@@ -60,6 +66,8 @@ class RunImportSessionJob extends Job
             dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::Completed));
         } catch (\Exception $exception) {
             dispatch(new SetImportSessionStatusJob($model, ImportSessionStatus::Failure, ExceptionFormatter::getMessageWithFileInfo($exception)));
+        } finally {
+            @unlink($filename);
         }
     }
 }
